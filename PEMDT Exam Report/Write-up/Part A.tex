@@ -1,1 +1,19 @@
-\section{Part A}
+\section{Power Electronics}
+    \subsection{Fundamental Building Blocks and Design}
+        The fundamental building block in power electronic converters is the power semiconductor device. These devices are usually diodes or transistors, enabling precise control over electrical current and voltage flow. Given that they are typically used for switching operations, they allow for converting electrical power from one form to another, such as from AC to DC or, in our case, from one DC voltage level to another. 
+
+        As the system is required to decrease the DC voltage level, two main types of voltage regulators can be used: a linear regulator or a switched-mode power supply (SMPS). The appropriate topology for compact DC-to-DC converters with high efficiencies, more commonly known as buck converters, typically uses field effect transistors like MOSFETs and IGBTs in switch mode. However, these converters require passive components to smooth and filter the outputs of the switch. Designing this type of power electronic converter requires a systematic approach which incorporates the following steps:
+
+        \begin{enumerate}
+            \item For a given switching frequency, a pulse width modulated (PWM) waveform is generated using a duty cycle (\(\delta\)) derived from the stated input and output voltage.
+            
+            \item The appropriate power semiconductor device has to be selected for switching. This primarily depends on the voltage/current rating, switching speed and losses of the chosen transistor and how well it adheres to the given system. This switch is fed an input from the low-voltage DC bus and the PWM to create a modulated voltage waveform.
+
+            \item A diode is set up anti-parallel to the input voltage. The appropriate diode must be selected to allow free-wheeling current flow in the correct direction when the switch is off and blocks the reverse voltage when the switch is on.
+
+            \item The capacitor and inductor are passive components set up in parallel and series to the input voltage, respectively. Their values of the capacitance and inductance have to be derived to filter, smooth and shape voltage and current fluctuations, respectively.
+
+            \item The correct heat sink has to be selected for thermal management that implements appropriate heat dissipation and cooling mechanisms to keep the switching device within its safe operating temperature range. 
+
+            \item The final step required the design to be optimised. Analysis of the system with different switching frequencies must 
+        \end{enumerate}
