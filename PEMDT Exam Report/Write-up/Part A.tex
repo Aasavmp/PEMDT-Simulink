@@ -19,17 +19,48 @@
         \end{enumerate}
 
         \textit{Add a bit on the duty cycles chosen explaining how you can get \(\delta_{min} \& \delta_{max}\) from the values provided}
+        \textit{Add a bit on how capacitance and inductance are calculated}
 
     \subsection{SMPS vs Conventional Voltage Regulators}
         SMPS is more efficient than conventional voltage regulators for several reasons. 
-        Firstly, a conventional voltage regulator regulates the output voltage by controlling the current flow between the input and output terminals. This is achieved using a pass transistor (typically a bipolar junction transistor or a MOSFET) connected in series between the input and output terminals. The pass transistor acts as a variable resistance, fundamentally adjusting its impedance to drop the excess voltage across it and maintain a stable output voltage. The downside is that the series transistor is continually biased in its linear region, dissipating power in the form of heat. Since all the load current must pass through the series transistor, this results in poor efficiency, wasted \(iV\) or \(i^2R\) power and continuous heat generation around the transistor. In contrast, SMPS operate by rapidly switching the input voltage on and off. When the switching transistor is on and conducting current, the voltage drop across it is at its minimal value, and when the transistor is off, there is no current flow through it. So the transistor is acting like an ideal on/off switch. This means that the majority of the \(iV\) power losses occur during the switching phase, which is very short in comparison to the constant power loss in conventional voltage regulators.
-        Secondly, something worth mentioning is the space efficiency of SMPS compared to conventional voltage regulators. Due to the large power dissipation of conventional voltage regulators, the heat sinks on them are usually much larger. As well as this, SMPS is able to use much smaller components due to the higher switching frequency and is, therefore, more energy dense and more efficient in terms of its overall size-to-power loss ratio.
+        Firstly, a conventional voltage regulator regulates the output voltage by controlling the current flow between the input and output terminals. This is achieved using a pass transistor (typically a bipolar junction transistor or a MOSFET) connected in series between the input and output terminals. The pass transistor acts as a variable resistance, fundamentally adjusting its impedance to drop the excess voltage across it and maintain a stable output voltage. The downside is that the series transistor is continually biased in its linear region, dissipating power in the form of heat. Since all the load current must pass through the series transistor, this results in poor efficiency, wasted \(iV\) or \(i^2R\) power and continuous heat generation around the transistor. In contrast, SMPS operate by rapidly switching the input voltage on and off. When the switching transistor is on and conducting current, the voltage drop across it is at its minimal value, and when the transistor is off, there is no current flow through it. So the transistor acts like an ideal on/off switch. This means that most of the \(iV\) power losses occur during the switching phase, which is very short compared to the constant power loss in conventional voltage regulators.
+        
+        Secondly, the space efficiency of SMPS compared to conventional voltage regulators is worth mentioning. Due to the large power dissipation of conventional voltage regulators, the heat sinks on them are usually much larger. As well as this, SMPS can use much smaller components due to the higher switching frequency and is, therefore, more energy dense and more efficient in terms of its overall size-to-power loss ratio.
 
     \subsection{MOSFET vs IGBT}
         Insulated Gate Bipolar Transistors (IGBT) and Metal Oxide Semiconductor Field Effect Transistors (MOSFET) are both semiconductor devices, but they have key differences, as shown in Table \ref{tab: SMPS Comparison}.
-
         \input{PEMDT Exam Report/tables_tex/SMPS Compare}
 
     \subsection{Transistor Selection}
+        When designing this converter it was crucial to pick a transistor that adhered to the converters operational constraints and was as efficient as possible. Initially, all the available transistors were compared to the maximum continuous forward current (60A) and voltage (28V) of the system. It was found that only 4 transistors had a higher drain current or current carrying capacity than the system's requirements. These 4 transistors (2, 5, 8 \& 9) all had a higher breakdown voltage than the systems max. continuous voltage so would all operate in a region where they would not experience electrical breakdown and fail. They are highlighted in green on Table \ref{tab: transistor characterstics}.
+        \input{PEMDT Exam Report/tables_tex/Transistor Characteristics}
+
+        The 4 potential transistors were then compared to see if they could withstand the switching frequencies. Although transistor 2 \& 5 had the lowest switching time and therefore the highest potential switching frequency, all 4 transistors were capable of switching frequencies up to 3MHz so they could all be used based on this criteria.
+        
+        Although all 4 of these transistors can operate in a safe region the efficiency of the converter also has to be maximised. The efficiency of the system can be improved by minimising losses in the system, and in this case the transistor. The losses of the system can be worked out by adding the conduction loss (\(P_{conduction}\)) to the switching loss (\(P_{switch}\)) to give an overall power loss. The conduction and switching losses can be calculated using the following equations: 
+        \begin{gather}
+            P_{conduction} = I^2R_{DS_{on}} \delta_{max} \label{conduction loss} \\ P_{switch} = \frac{V f_{sw}}{2} [t_{on} + t_{off}] I, \label{switching loss}
+        \end{gather}
+        where \(I=60\)A, the system's forward current; \(R_{DS_{on}}\) is the on-state resistance; \(\delta_{max} = 0.545\) is the max. duty cycle; \(V\) is the drain-source voltage; \(f_{sw} = 20\)kHz is the switching frequency; and \(t_{on}/t_{off}\) is the time taken for the transistor to switch on and off respectively.
+        
+        Using Eq. (\ref{conduction loss}) \& (\ref{switching loss}) it is clear that transistor 5 \& 8 have the lowest losses, however, transistor 8 has a breakdown voltage that is very close to the systems operating voltage, so if the converter is designed with a safety factor of 1.5 to account for any fluctuations transistor 5 is the optimal choice (highlighted in red on Table \ref{tab: transistor characterstics}).
 
     \subsection{Diode Selection}
+        As with the transistor, the diode was selected in a similar way. All the diodes were compared against the converters operational criteria (at the diode) of a 60A forward current and a 12V reverse voltage drop across the diode. As shown in Table \ref{tab: diode characterisitics}, only 4 diodes, highlighted in green, met the system's criteria. All 4 potential diodes had a similar average power loss. However, diode 6 (in red on Table \ref{tab: diode characterisitics}) has the lowest forward voltage, the minimum voltage across the diode needed to allow current to flow. Meaning it has the most effective and efficient operation during conduction. It also has the quickest reverse recovery time, the time it takes for a diode to transition from the conducting state to the non-conducting state when the polarity of the voltage across it is reversed. This meant that compared to the other potential diodes, it is able to withstand the highest switching frequency, which is ideal for a system using a MOSFET. However, this being said, all the potential diodes operate on the threshold of the system's forward current, and therefore, none of the diodes fully meet safety requirements if a safety factor of 1.5 times the max. current is used (rule of two-thirds).
+        \input{PEMDT Exam Report/tables_tex/Diode Characteristics}
+
+    \subsection{Heatsink Selection}
+        The final part to select for the converter is the heatsink that will be used to control the chosen transistor's temperature. Heatsink 1 was found to be too big and could not be used effectively for the chosen transistor. Out of the remaining heatsinks, to determine which heatsink is best, the required thermal conductivity and resistance of the heatsink had to be calculated. This was done by first calculating the temperature at the heatsink using known values of the transistor's thermal resistivity and comparing this temperature to the ambient temperature, \(T_{ambient}\), as shown below:
+        \begin{gather}
+            T_{sink} = T_j - (R_{jc} + R_{cs})P_{loss} \\
+            R_{\theta sink} = \frac{1}{C_{\theta sink}} = \frac{T_{sink} - T_{ambient}}{P_{loss}},
+        \end{gather}
+        where \(T_{sink}\) is the temperature at the heatsink; \(T_j\) is the max. junction temperature of the transistor; \(R_{jc}/R_{cs}\) are the transistor's thermal resistivity between the junction/case and case/heatsink respectively; \(P_{loss}\) is the power loss of the transistor; and \(R_{\theta sink}\) and \(C_{\theta sink}\) are the required thermal resistance and conductivity of the heatsink respectively.
+
+        The required thermal resistivity of the heatsink at a switching frequency of \(f_{sw} = \) 20kHz and a duty cycle of \(\delta_{max} = 0.545\) was calculated to be \(R_{\theta sink} = 9.40^o\)C/W or \(C_{\theta sink} = 0.106 \)W/\(^o\)C.
+
+        \input{PEMDT Exam Report/tables_tex/Heatsink Characteristics}
+
+        As shown in Table \ref{tab: heatsink charactersitics}, only heatsink 4 passed the criteria for safe operation and therefore was the chosen heatsink. The threshold used provides a safe buffer in case higher power losses are seen. Therefore, heatsink 4 should be able to conduct heat losses at a sufficient rate even if the switching frequency is increased, keeping the chosen transistor within its operating region.
+
+        
