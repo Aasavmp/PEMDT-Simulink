@@ -2,6 +2,7 @@
 \section{Generator stability and System Analysis Assessment}
 \renewcommand{\thesubsection}{\thesection.\alph{subsection}}
     \subsection{}
+        \vspace{-5mm}
         \begin{figure}[tbh!]
             \centering
             \caption*{N.B. the diagram is not to scale and all angles are in degrees}
@@ -35,16 +36,19 @@
              \end{subfigure}
              \caption{Power system stability if either a 0.12 MW line or 0.15 MW line fails after being in parallel with one another}
              \label{fig: line loss}
+             \vspace{-10mm}
         \end{figure}
         \subsubsection*{0.15 MW Line Fails}
             When the 0.15 MW line fails, only the 0.12 MW line remains, as shown in Figure \ref{fig: 12onlyline}. To determine whether the system will stay in synchronisation Area \(A_2 \geq\) Area \(A_1\). 
+
+            \vspace{-3mm}
     
             \begin{align}
                 \delta_1 = sin^{-1}\left(\frac{0.1}{0.27}\right) = 0.379... && \delta_2 = sin^{-1}\left(\frac{0.1}{0.12}\right) = 0.985...\\
                 A_1 = \int_{\delta_1}^{\delta_2}{0.1 - 0.12sin(\delta) \: d\delta} = 0.0154 && A_2 = 2\int_{\delta_2}^{\frac{\pi}{2}}{0.12sin(\delta) - 0.1 \: d\delta} = 0.0155
             \end{align}
 
-            \(A_2 \geq A_1\); therefore, the system will stay in synchronisation under this fault.
+            \(A_2 \geq A_1\); therefore, the system will stay in synchronisation under this fault. However, it is very close to the threshold of failure and so recommendations of how to keep this system stable are mentioned below.
 
         \subsubsection*{0.12 MW Line Fails}
             When the 0.12 MW line fails, only the 0.15 MW line remains, as shown in Figure \ref{fig: 15onlyline}. Once again, a similar comparison for the system under this failure is done to determine whether it stays in synchronisation. 
@@ -57,8 +61,8 @@
             \(A_2 \geq A_1\); therefore, the system will stay in synchronisation under this fault.
 
         \subsubsection*{Recommendations}
-            \hl{Need to write any recommendations of how to ensure power systems remain stable}
-
+            There are several recommendations for how these systems can be kept stable. After running the calculations above, it is clear that the 0.12 MW line capacity can be upgraded for a larger threshold and better stability. On top of this, the aircraft can be fitted with automatic load-shedding measures, so only essential loads are sent over the remaining line during transmission line failure making sure that line isn't overloaded. Finally. most aircrafts are fitted with an auxiliary power unit (APU), which can be used to provide additional power in the event of a fault until the transmission lines are restored.
+            
     \subsection{}
         If the current (\(I_{a, b, c}\)) in a 3-phase system is unbalanced the positive (\(I_1\)), negative (\(I_2\)) and zero (\(I_0\)) sequences can be calculated using the following equations:
         \begin{align}
@@ -66,19 +70,20 @@
         \end{align}
         where:
         \begin{align}
-            I_a = 20\phase{15^o} = 20cos(15) + \textbf{j}20sin(15) \\
-            I_b = 24\phase{-120^o} = 24cos(-120) + \textbf{j}24sin(-120) \\
-            I_a = 18\phase{165^o} = 18cos(165) + \textbf{j}18sin(165)
+            I_a &= 20\phase{15^o} = 20cos(15) + \textbf{j}20sin(15) \\
+            I_b &= 24\phase{-120^o} = 24cos(-120) + \textbf{j}24sin(-120) \\
+            I_c &= 18\phase{165^o} = 18cos(165) + \textbf{j}18sin(165)
         \end{align}
         \begin{align}
             a = 1\phase{-120^o} = -\frac{1}{2} + \textbf{j}\frac{\sqrt{3}}{2} && a^2 = 1\phase{-240^o} = -\frac{1}{2} - \textbf{j}\frac{\sqrt{3}}{2}
         \end{align}
         Substituting these values into Eq. (\ref{sequence eqns}), the following positive, negative and zero sequences were found for all 3 phases.
         \begin{align}
-            I_{a1} &= 3.99 + \textbf{j}6.19 = 4.91\phase{35.60^o} \\ I_{b1} &= 0.48 - \textbf{j}4.87 = 4.91\phase{-84.40^o} \\
-            I_{c1} &= -4.47 + \textbf{j}2.03 = 4.91\phase{-204.40^o} \\
-            I_{a2} &= 18.68 + \textbf{j}5.97 = 19.61\phase{17.72^o} \\ I_{b2} &= -14.51 + \textbf{j}13.19 = 19.61\phase{137.72^o} \\
-            I_{c2} &= -4.17 - \textbf{j}19.16 = 19.61\phase{257.72^o} \\
+            I_{a1} &= 3.99 + \textbf{j}6.19 = 4.91\phase{35.60^o} & I_{a2} &= 18.68 + \textbf{j}5.97 = 19.61\phase{17.72^o} \\ I_{b1} &= 0.48 - \textbf{j}4.87 = 4.91\phase{-84.40^o} & I_{b2} &= -14.51 + \textbf{j}13.19 = 19.61\phase{137.72^o}\\
+            I_{c1} &= -4.47 + \textbf{j}2.03 = 4.91\phase{-204.40^o} & I_{c2} &= -4.17 - \textbf{j}19.16 = 19.61\phase{257.72^o}
+        \end{align}
+        \begin{align}
             I_{a0, b0, c0} &= -3.36 - \textbf{j}3.65 = 4.96\phase{-132.60^o}
         \end{align}
-        \hl{Need to write how they can be used to detect faults}
+
+        In a balanced system, the negative and zero sequences are zero. However, during a single-phase fault, where one phase draws a significantly different current, the system becomes unbalanced, resulting in increased negative and zero sequence components. Monitoring these sequence components is important for detecting faults and ensuring system reliability. Fault sensors continuously monitor the negative and zero sequence values of the transmission lines. If a surge or abnormality is detected in either sequence, it serves as an indication of a fault occurrence. In response, circuit breakers can be promptly activated to isolate the faulty section and prevent further damage or disruption to the system. By monitoring these sequence components, potential faults can be quickly identified and mitigated, enhancing the overall stability and performance of the electrical system.
