@@ -15,6 +15,11 @@
 
             \item The correct heat sink has to be selected for thermal management that implements appropriate heat dissipation and cooling mechanisms to keep the switching device within its safe operating temperature range. 
 
+            \item The max. and min. duty cycle (\(\delta\)) of the system should be calculated. This is done using the following equation:
+            \begin{align}
+                \delta = \frac{V_{out}}{V_{in}} && \delta_{max} = \frac{V_{inmax}}{V_{outmin}} = 0.545 && \delta_{min} = \frac{V_{inmin}}{V_{outmax}} = 0.321
+            \end{align}
+
             \item The final step requires the design to be optimised. Analysis of the system with different switching frequencies generally shows that a higher switching frequency offers advantages such as the reduced size of inductors and capacitors, leading to compact designs and higher power density. However, it has disadvantages, including increased switching losses, higher electromagnetic interference (EMI), and potentially larger heat sink requirements. The choice of switching frequency should consider trade-offs based on the application's specific requirements, balancing factors such as efficiency, size constraints, EMI concerns, and thermal management.
         \end{enumerate}
 
