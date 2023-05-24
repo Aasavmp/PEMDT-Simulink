@@ -1,2 +1,5 @@
 
 *.asv
+*.xml
+*.slxc
+*.mat

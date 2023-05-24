@@ -1,44 +1,55 @@
-close all
-clear all
+% close all
+% clear all
+% 
+% %Input
+% %Voltage 22V-28V
+% 
+% %Output
+% %voltage 9V-12V
+% %Current 40A-60A
+% 
+% 
+% %pre defined variables
+% Vinmax = 28;
+% Vinmin = 22;
+% Vin = 25;
+% 
+% Voutmax = 12;
+% Voutmin = 9;
+% 
+% Ioutmax = 60;
+% Ioutmin = 40;
+% fs = 2e4;
+% 
+% %efficency
+% E = 1;
 
-%Input
-%Voltage 22V-28V
+function [L, Cout, D_avg] = CapacitorInductorCalc(Vinmax, Vinmin, Vin, Voutmax, Voutmin, Ioutmax, Ioutmin, fs, E)
+%     fsmin = fs/2;
+    fsmin = fs;
 
-%Output
-%voltage 9V-12V
-%Current 40A-60A
+    Ioutavg = (Ioutmax + Ioutmin)/2;
+    
+    %Max duty cycle
+    Dmax = Voutmax/(Vinmin*E);
+    
+    %min duty cycle
+    Dmin = Voutmin/(Vinmax*E);
 
+    % Average Duty cycle
+    D_avg = (Dmax+Dmin)/2;
+    
+    %inductor ripple
+    IL = 0.1*Ioutmax;
+    
+    %Inductor
+    L = (Voutmax*(Vin-Voutmax))/(IL*fsmin*Vin);
+    
+    %average forward current
+    If = Ioutmax*(1-Dmax);
 
-%pre defined variables
-Vinmax = 28;
-Vinmin = 22;
-Vin = 25;
-
-Voutmax = 12;
-Voutmin = 9;
-
-Ioutmax = 60;
-Ioutmin = 40;
-fs = 1000;
-fsmin = fs/2;
-
-%efficency
-E = 0.9;
-
-%Max duty cycle
-D = Voutmax/(Vinmax*E);
-
-%min duty cycle
-Dmin = Voutmin/(Vinmax*E);
-
-%inductor ripple
-IL = 0.2*Ioutmax;
-
-%Inductor
-L = (Voutmax*(Vin-Voutmax))/(IL*fsmin*Vin);
-
-%average forward current
-If = Ioutmax*(1-D);
-
-%Capacitor 
-Cout = IL/(8*fsmin*Voutmax);
+    delta_V = 0.01*Vin;
+    
+    %Capacitor 
+    Cout = IL/(8*fsmin*delta_V);
+end
