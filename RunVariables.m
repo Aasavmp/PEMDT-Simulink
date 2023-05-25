@@ -29,13 +29,19 @@ R_f = 0.223;
 % Inductance of field
 L_f = 0.0138;
 
+% Machine rot. moment of inertia
+J = 0.5;
+
+% Machine viscous force
+B = 0.05;
+
 % Calculate the required capacitor and inductor
 [L, C, D_avg] = CapacitorInductorCalc(Vinmax, Vinmin, Vin, Voutmax, Voutmin, Ioutmax, Ioutmin, fs, E);
 
 %% Getting current controller
 % we want a critically damp system at a quick settling time t_s
 % so if we say t_s is 5T then T = t_s/5
-test_settling_times = 0.2;
+test_settling_times = 0.4;
 
 legend_entries = {};
 for i = test_settling_times
@@ -85,3 +91,20 @@ Torque = [T_pre, T_post];
 plot(omega, Torque)
 hold on
 yline(max(T_pre))
+
+%% Speed Controller
+speed_settling_time = 30;
+Time_period_speed = speed_settling_time/5;
+coeff_a_speed = 2/Time_period_speed;
+coeff_b_speed = (1/Time_period_speed)^2;
+
+T_load = 10;
+omega_avg = 100;
+
+kpw = (J*coeff_a_speed) - B;
+kiw = J*coeff_b_speed;
+
+kpw_load = (J*coeff_a_speed) - B - T_load/omega_avg;
+
+numerator = (1/J).*[kpw kiw];
+denominator = [1 ((B/J)+(kpw/J)) (kiw/J)];
