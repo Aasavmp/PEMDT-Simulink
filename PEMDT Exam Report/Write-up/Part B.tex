@@ -47,7 +47,7 @@
 
             By setting \(K_p\) and \(K_i\) in the characteristic equation on the denominator of Eq. (\ref{eqn: character eqn}), there is complete control over the system's response. However, these values have to be calculated to place the poles in the correct position. Given the system should have a suitably fast and non-oscillatory response, the characteristic equation was compared to the ideal characteristic equation for a critically damped system, which for a second-order system is given by:
             \begin{equation}
-                G_{ideal}(s) = \left(\frac{\frac{\lambda}{T}}{s+\left(\frac{1}{T}\right)}\right)^2 = \frac{\left(\frac{\lambda}{T}\right)^2}{s^2+\frac{2}{T}s + \frac{1}{T^2}},
+                G_{ideal}(s) = \left(\frac{\frac{\lambda}{T}}{s+\left(\frac{1}{T}\right)}\right)^2 = \frac{\left(\frac{\lambda}{T}\right)^2}{s^2+\frac{2}{T}s + \frac{1}{T^2}}, \label{ideal sys}
             \end{equation}
             where \(T\) is the time period and is roughly a fifth of the settling time \(T = \frac{t_s}{5}\).
 
@@ -94,7 +94,7 @@
             T_{lim} &= \dot \omega J_{total} + \omega B_{total} \:\:\:\: &(\omega < 8000 \text{ rpm}) \\
             T_{lim} &= \dot \omega J_{total} + \omega B_{total} - 30 \:\:\:\: &(\omega \geq 8000 \text{ rpm})
         \end{align}
-        where \(J_{total}\) and \(B_{total}\) are the systems mass moment of inertia and viscous friction terms, respectively.
+        where \(J_{total}\) and \(B_{total}\) are the systems mass moment of inertia and viscous friction terms, respectively. And the value of \(\omega\) in the calculation is in rad/s.
 
         The torque limit was graphed as shown in Figure \ref{fig: max torque}, and it was found that the instantaneous maximum torque that can be applied at the maximum angular acceleration is just before the turbofan is ignited at 8000 rpm and is 81.88 Nm.
         \begin{figure}[tbh!]
@@ -105,4 +105,36 @@
         \end{figure}
 
     \subsection{Speed Controller Design}
-                
+        To design the speed controller, an equivalent transfer function of the speed loop was constructed. In order to construct this, it was assumed that only the Q axis generated torque, and the D axis affected the field. With this assumption, the closed loop transfer function being built was split into 3 parts: the control system (\(G_C^{\omega_R}\)), the current control loop (\(G_{CL}^{i_a}\)) and the machine control loop (\(G_M^{\omega_R}\)). These were all combined into one transfer function to obtain the closed-loop speed control using the following equation:
+        \begin{align}
+            G_{CL}^{\omega_R} = \frac{G_C^{\omega_R}(s) G_{CL}^{i_a}(s) G_M^{\omega_R}(s)}{1 + G_C^{\omega_R}(s) G_{CL}^{i_a}(s) G_M^{\omega_R}(s)} \label{speed loop}
+        \end{align}
+        Where:
+        \begin{align}
+            G_C^{\omega_R}(s) = \frac{K_p^\omega}{s}\left(s+\frac{K_i^\omega}{K_p^\omega}\right) && G_M^{\omega_R}(s) = \frac{\frac{1}{J_{total}}}{s+\frac{B_{total}}{J_{total}}}
+        \end{align}
+        Equation (\ref{speed loop}) includes the closed-loop current control system; however, it has been assumed that the control system being modelled has a bandwidth an order of 10 times smaller than the control circuit, and therefore, it is assumed that the current controller doesn't have such a large effect on the transfer function and is just a unity gain (\(G_{CL}^{i_a}(s) = 1\)). The equation for the closed-loop speed control loop can now be written as:
+        \begin{align}
+            G_{CL}^{\omega_R} = \frac{G_C^{\omega_R}(s) G_M^{\omega_R}(s)}{1 + G_C^{\omega_R}(s) G_M^{\omega_R}(s)} = \frac{\frac{K_p^\omega}{J_{total}}\left(s + \frac{K_i}{K_p}\right)}{s^2 + s\left(\frac{B_{total}+K_p^\omega}{J}\right) + \frac{K_i^\omega}{J_{total}}}
+        \end{align}
+        As for the current controller designed previously, the characteristic equation of this transfer function was compared to an ideal system that is critically damped (shown in Eq. (\ref{ideal sys})). In this instance, the settling time (\(t_s\)) was set to 30\% of the 120s threshold, and it is said to be 5 times larger than the time period \(T\). This produced the following values for \(K_p^\omega\) and \(K_i^\omega\):
+        \begin{align}
+            K_p^\omega = \frac{2J_total}{T} - B_{total} = 0.117 && K_i^\omega = \frac{J_{total}}{T^2} = 0.0139
+        \end{align}
+        A similar transfer function was created for the case where a load is applied. Its transfer function was given as follows:
+        \begin{align}
+             G_{CL}^{\omega_R} = \frac{\frac{K_p^\omega}{J_{total}}\left(s + \frac{K_i}{K_p}\right)}{s^2 + s\left(\frac{B_{total}+K_p^\omega}{J} + \frac{T_{load}}{\omega_{avg}J_{total}}\right) + \frac{K_i^\omega}{J_{total}}}
+        \end{align}
+        Which, at a load of 10 Nm and an average rotational speed of 100 rad/s change \(K_p^\omega\) to the following:
+        \begin{align}
+            K_p^\omega = \frac{2J_total}{T} - B_{total} - \frac{T_{load}}{\omega_{avg}J_{total}} = 0.0167
+        \end{align}
+        \begin{figure}[tbh!]
+            \centering
+            \includegraphics[width=0.6\linewidth]{PEMDT Exam Report/img/Speed Control TF.jpg}
+            \caption{Response of speed control transfer function with and without a load at a 30s settling time}
+            \label{fig: speed control tf}
+        \end{figure}
+        Figure \ref{fig: speed control tf} shows that the transfer function definitely achieves two out of the three criteria, settling at 12,000 RPM and having as close to a non-oscillatory response as possible. The acceleration threshold required more complex dynamics, which proved difficult to model with the given resources.
+
+    \subsection{Speed Control Implementation}
